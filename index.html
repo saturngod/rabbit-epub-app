@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Rabbit</title>
+    <link rel="stylesheet" href="style/style.css" type="text/css" media="screen">
+    
+  </head>
+  <body>
+    <div id="loading"><div id="loadingText">Loading...</div></div>
+    <section id="content">
+        <section>  
+            <label>Epub:</label>
+            <input id="fromEpub" type="text" readonly>
+            <button id="openFile" onclick="openFile();">Browse...</button>
+        </section>
+
+        <section>  
+            <label>Save To:</label>
+            <input id="toPath" type="text" readonly>
+            <button id="save" onclick="openSaveFile();">Save As...</button>
+        </section>
+    
+        <section>
+            <label>Convert To:</label>
+            <select id="convert">
+                <option value="uni">Unicode</option>
+                <option value="zg">Zawgyi</option>
+            </select>
+        </section>
+    
+
+        <button id="convertBtn" onclick="convert()">Convert</button>
+
+    </section>
+    <script>
+    var remote = require('remote'); 
+    var dialog = remote.require('dialog');
+    
+    function openFile () {
+
+      dialog.showOpenDialog({ properties: [ 'openFile'],filters: [{ name: 'EPub', extensions: ['epub'] }]},function (fileNames) {
+          if(fileNames !== undefined) {
+              document.getElementById("fromEpub").value = fileNames;
+          }
+      }); 
+    }
+    
+    function openSaveFile() {
+        dialog.showSaveDialog({filters: [{ name: 'EPub', extensions: ['epub'] }]},function(path) {
+            if(path !== undefined) {
+                document.getElementById("toPath").value = path;
+            }
+        });
+    }
+    
+    function convert() {
+        
+        var inputFile = document.getElementById("fromEpub").value;
+        var saveFile = document.getElementById("toPath").value;
+        var format = document.getElementById("convert").value;
+        
+        if(inputFile == "") {
+            alert ('Please choose the Epub file');
+            return;
+        }
+        else if(saveFile == "") {
+            alert('Please choose the save file path');
+        }
+        
+        
+        var args = remote.require('cli-args')(process.argv.slice(2));
+        var path = remote.require('path');
+        var converter = remote.require(path.resolve(__dirname,"./modules/converter.js"));
+        
+        document.getElementById("loading").style.display = 'block';
+        
+        converter.parse(inputFile,format,function() {
+          var zipit = remote.require(path.resolve(__dirname,"./modules/zipit.js"));
+          zipit(inputFile,saveFile,function(err,filepath) {
+              document.getElementById("loading").style.display = 'none';
+              
+            if(err) {
+              alert('Sorry, cannot make epub file');
+            }
+            else {
+                alert('Done');
+
+            }
+          });
+
+        });
+        
+    }
+    </script>
+  </body>
+</html>

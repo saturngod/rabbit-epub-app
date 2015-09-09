@@ -1,0 +1,15 @@
+{
+  "name"    : "Rabbit-Epub",
+  "version" : "0.1.0",
+  "main"    : "main.js",
+  "dependencies": {
+      "unzip2" : "*",
+      "cli-args" : "*",
+      "mkdirp" : "*",
+      "fstream" : "*",
+      "xml2js" : ">=0.4.9",
+      "zip-folder" : ">=1.0",
+      "rimraf" : ">=2.4.1",
+      "process" : "*"
+    }
+}
