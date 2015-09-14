@@ -48,6 +48,10 @@
     function openSaveFile() {
         dialog.showSaveDialog({filters: [{ name: 'EPub', extensions: ['epub'] }]},function(path) {
             if(path !== undefined) {
+                var ext = path.substr(path.length - 5); // => "Tabs1"
+                if(ext!=".epub") {
+                    path = path + ".epub";
+                }
                 document.getElementById("toPath").value = path;
             }
         });
